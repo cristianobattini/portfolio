@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useProjectStore, useAuthStore } from '../store'
 import { authApi } from '../api'
 import './Admin.css'
@@ -139,6 +140,7 @@ function ProjectForm({ initial = emptyForm, onSave, onCancel, submitLabel = 'Lau
     ...initial,
     tech: Array.isArray(initial.tech) ? initial.tech.join(', ') : initial.tech,
   })
+  const [descTab, setDescTab] = useState('write')
 
   const set = (field, val) => setForm(prev => ({ ...prev, [field]: val }))
   const setLink = (field, val) => setForm(prev => ({ ...prev, links: { ...prev.links, [field]: val } }))
@@ -165,8 +167,36 @@ function ProjectForm({ initial = emptyForm, onSave, onCancel, submitLabel = 'Lau
           <input value={form.short} onChange={e => set('short', e.target.value)} placeholder="One-line description" />
         </div>
         <div className="pform__field pform__field--full">
-          <label>Full Description</label>
-          <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={4} placeholder="Detailed description..." />
+          <div className="pform__desc-header">
+            <label>Full Description</label>
+            <div className="pform__desc-tabs">
+              <button
+                type="button"
+                className={`pform__desc-tab ${descTab === 'write' ? 'active' : ''}`}
+                onClick={() => setDescTab('write')}
+              >Write</button>
+              <button
+                type="button"
+                className={`pform__desc-tab ${descTab === 'preview' ? 'active' : ''}`}
+                onClick={() => setDescTab('preview')}
+              >Preview</button>
+            </div>
+          </div>
+          {descTab === 'write' ? (
+            <textarea
+              value={form.description}
+              onChange={e => set('description', e.target.value)}
+              rows={8}
+              placeholder="Supports **markdown**: headings, lists, `code`, links..."
+            />
+          ) : (
+            <div className="pform__desc-preview detail__markdown">
+              {form.description
+                ? <ReactMarkdown>{form.description}</ReactMarkdown>
+                : <span className="pform__desc-empty">Nothing to preview yet.</span>
+              }
+            </div>
+          )}
         </div>
         <div className="pform__field">
           <label>Category</label>
@@ -286,6 +316,7 @@ function AdminDashboard() {
 
   return (
     <div className="admin page-enter">
+      {/* Notification toast */}
       {notification && (
         <div className={`admin__toast ${notification.type === 'error' ? 'admin__toast--error' : ''}`}>
           {notification.msg}
@@ -303,7 +334,7 @@ function AdminDashboard() {
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginTop: '2.5rem' }}>
             <button className="btn btn--ghost admin__logout" style={{ fontSize: '0.78rem' }} onClick={() => setShowChangePw(true)}>
-              Change password
+              🔑 Cambia password
             </button>
             <button className="btn btn--ghost admin__logout" onClick={logout}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -358,12 +389,12 @@ function AdminDashboard() {
           <div className="modal-overlay" onClick={() => setConfirmDelete(null)}>
             <div className="modal glass" onClick={e => e.stopPropagation()}>
               <h3>Delete project?</h3>
-              <p>This action cannot be undone.</p>
+              <p>Questa azione non può essere annullata.</p>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', justifyContent: 'center' }}>
                 <button className="btn btn--primary" style={{ background: 'var(--nova)' }} onClick={() => handleDelete(confirmDelete)}>
-                  Delete
+                  Elimina
                 </button>
-                <button className="btn btn--ghost" onClick={() => setConfirmDelete(null)}>Cancel</button>
+                <button className="btn btn--ghost" onClick={() => setConfirmDelete(null)}>Annulla</button>
               </div>
             </div>
           </div>
@@ -375,7 +406,6 @@ function AdminDashboard() {
   )
 }
 
-// ── Export ────────────────────────────────────────────────────────
 export default function Admin() {
   const isAuthenticated = useAuthStore(s => s.isAuthenticated)
   const checkAuth = useAuthStore(s => s.checkAuth)

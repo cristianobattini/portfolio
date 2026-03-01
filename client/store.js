@@ -1,4 +1,4 @@
-// store.js — Zustand stores che parlano col backend
+// src/store.js — Zustand stores che parlano col backend
 import { create } from 'zustand'
 import { projectsApi, authApi, tokenStore } from './api'
 
@@ -8,6 +8,7 @@ export const useProjectStore = create((set, get) => ({
   loading: false,
   error: null,
 
+  // Carica tutti i progetti
   fetchProjects: async (params = {}) => {
     set({ loading: true, error: null })
     try {
@@ -18,14 +19,17 @@ export const useProjectStore = create((set, get) => ({
     }
   },
 
+  // Progetto singolo (dalla lista in cache o fetch)
   getProject: (id) => get().projects.find(p => String(p.id) === String(id)),
 
+  // Aggiunge progetto via API
   addProject: async (data) => {
     const project = await projectsApi.create(data)
     set(state => ({ projects: [project, ...state.projects] }))
     return project
   },
 
+  // Aggiorna progetto via API
   updateProject: async (id, data) => {
     const updated = await projectsApi.update(id, data)
     set(state => ({
@@ -34,6 +38,7 @@ export const useProjectStore = create((set, get) => ({
     return updated
   },
 
+  // Elimina progetto via API
   deleteProject: async (id) => {
     await projectsApi.delete(id)
     set(state => ({
@@ -49,6 +54,7 @@ export const useAuthStore = create((set) => ({
   loading: false,
   error: null,
 
+  // Login: manda username+password, salva JWT
   login: async (username, password) => {
     set({ loading: true, error: null })
     try {
@@ -62,11 +68,13 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  // Logout: rimuove token
   logout: () => {
     tokenStore.clear()
     set({ isAuthenticated: false, admin: null })
   },
 
+  // Verifica token ancora valido
   checkAuth: async () => {
     if (!tokenStore.get()) return
     try {

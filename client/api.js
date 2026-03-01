@@ -1,6 +1,6 @@
-// api.js — Client HTTP per le API del backend
+// src/api.js — Client HTTP per le API del backend
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 // ── Token management ──────────────────────────────────────────────
 export const tokenStore = {
