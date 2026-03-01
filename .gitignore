@@ -1,0 +1,25 @@
+node_modules/
+server/node_modules/
+client/node_modules/
+
+# Database (contiene dati sensibili)
+server/data/
+
+# Environment files
+.env
+server/.env
+client/.env
+!.env.example
+!server/.env.example
+!client/.env.example
+
+# Build
+client/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

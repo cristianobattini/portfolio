@@ -1,0 +1,216 @@
+.detail {
+  min-height: 100vh;
+  padding: calc(var(--nav-h) + 4rem) 0 8rem;
+}
+
+.detail-notfound {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: var(--nav-h) 0;
+  text-align: center;
+}
+
+.detail-notfound h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin: 1rem 0 2rem;
+}
+
+.detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 4rem;
+  transition: color 0.2s;
+}
+
+.detail__back:hover { color: var(--plasma); }
+
+.detail__hero {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 4rem;
+  align-items: center;
+  margin-bottom: 5rem;
+}
+
+.detail__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.detail__status {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.detail__title {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #fff 40%, var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.detail__short {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 2.5rem;
+}
+
+.detail__links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.detail__visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.detail__canvas-wrap {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle at center, color-mix(in srgb, var(--accent) 8%, transparent), transparent 70%);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow: 0 0 80px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.detail__divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent);
+  margin: 4rem 0;
+}
+
+.detail__body {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 5rem;
+  align-items: start;
+}
+
+.detail__section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.detail__text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+.detail__info-block {
+  margin-bottom: 2.5rem;
+}
+
+.detail__info-label {
+  font-size: 0.72rem;
+  color: var(--plasma);
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+
+.detail__tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.detail__tech-item {
+  padding: 0.35rem 0.85rem;
+  background: var(--nebula-dark);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.detail__tech-item:hover {
+  border-color: var(--plasma-dim);
+  color: var(--plasma);
+}
+
+.detail__dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+
+.detail__dl dt {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.detail__dl dd {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.detail__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.detail__nav-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: opacity 0.2s;
+}
+
+.detail__nav-item--next {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.detail__nav-item span {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+.detail__nav-item strong {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  transition: color 0.2s;
+}
+
+.detail__nav-item:hover strong { color: var(--plasma); }
+
+@media (max-width: 900px) {
+  .detail__hero { grid-template-columns: 1fr; }
+  .detail__visual { order: -1; }
+  .detail__canvas-wrap { width: 220px; height: 220px; }
+  .detail__body { grid-template-columns: 1fr; gap: 3rem; }
+}

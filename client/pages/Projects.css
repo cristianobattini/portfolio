@@ -1,0 +1,88 @@
+.projects-page {
+  min-height: 100vh;
+  padding: calc(var(--nav-h) + 5rem) 0 8rem;
+}
+
+.projects-page__header {
+  margin-bottom: 4rem;
+}
+
+.projects-page__title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--text-bright);
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  line-height: 0.95;
+}
+
+.projects-page__sub {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+
+.projects-page__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  transition: all 0.25s;
+}
+
+.filter-btn:hover {
+  color: var(--text-bright);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.filter-btn.active {
+  background: var(--plasma);
+  border-color: var(--plasma);
+  color: var(--void);
+}
+
+.filter-btn__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 100px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  background: rgba(255,255,255,0.1);
+}
+
+.filter-btn.active .filter-btn__count {
+  background: rgba(3, 3, 10, 0.2);
+}
+
+.projects-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.projects-page__empty {
+  padding: 6rem 2rem;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}

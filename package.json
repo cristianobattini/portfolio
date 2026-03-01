@@ -1,0 +1,16 @@
+{
+  "name": "space-portfolio",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\" --names \"API,UI\" --prefix-colors \"cyan,magenta\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "setup": "npm run install:all && cd server && node db/seed.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

@@ -1,0 +1,178 @@
+/* =============================================
+   SPACE PORTFOLIO — GLOBAL STYLES
+   ============================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Colors */
+  --void: #03030a;
+  --deep-space: #080820;
+  --nebula-dark: #0d0d2e;
+  --nebula: #12123a;
+  --star-dust: #1a1a4a;
+  
+  --plasma: #00f5ff;
+  --plasma-dim: rgba(0, 245, 255, 0.15);
+  --plasma-glow: rgba(0, 245, 255, 0.05);
+  --aurora: #7b2fff;
+  --aurora-dim: rgba(123, 47, 255, 0.2);
+  --nova: #ff2d78;
+  --solar: #ffd60a;
+  
+  --text-bright: #ffffff;
+  --text-primary: rgba(255,255,255,0.88);
+  --text-secondary: rgba(255,255,255,0.5);
+  --text-dim: rgba(255,255,255,0.25);
+
+  /* Typography */
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  /* Spacing */
+  --nav-h: 72px;
+  
+  /* Transitions */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-display);
+  background: var(--void);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: none;
+  font-family: var(--font-display);
+  border: none;
+  background: none;
+}
+
+input, textarea, select {
+  font-family: var(--font-display);
+}
+
+/* Custom cursor */
+#cursor {
+  position: fixed;
+  width: 12px;
+  height: 12px;
+  background: var(--plasma);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo), background 0.3s;
+  mix-blend-mode: screen;
+}
+
+#cursor-ring {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(0, 245, 255, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s var(--ease-out-expo), width 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo), border-color 0.3s;
+}
+
+body:has(a:hover, button:hover) #cursor {
+  width: 20px;
+  height: 20px;
+  background: var(--aurora);
+}
+
+body:has(a:hover, button:hover) #cursor-ring {
+  width: 56px;
+  height: 56px;
+  border-color: rgba(123, 47, 255, 0.5);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--star-dust); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--plasma-dim); }
+
+/* Selection */
+::selection {
+  background: var(--aurora-dim);
+  color: var(--plasma);
+}
+
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--plasma-dim);
+  border-radius: 100px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--plasma);
+  background: var(--plasma-glow);
+  letter-spacing: 0.05em;
+}
+
+.glass {
+  background: rgba(13, 13, 46, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Page transition */
+.page-enter {
+  animation: pageIn 0.6s var(--ease-out-expo) forwards;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Noise overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px;
+  pointer-events: none;
+  z-index: 9990;
+  opacity: 0.5;
+}
