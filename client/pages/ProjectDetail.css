@@ -1,6 +1,8 @@
 .detail {
   min-height: 100vh;
   padding: calc(var(--nav-h) + 4rem) 0 8rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .detail-notfound {

@@ -1,6 +1,8 @@
 .projects-page {
   min-height: 100vh;
   padding: calc(var(--nav-h) + 5rem) 0 8rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .projects-page__header {
