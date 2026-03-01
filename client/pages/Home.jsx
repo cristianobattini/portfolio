@@ -18,10 +18,10 @@ const env = {
 }
 
 const STATS = [
-  { value: '3+', label: 'Years experience' },
-  { value: '20+', label: 'Projects shipped' },
-  { value: '100K+', label: 'Users reached' },
-  { value: '∞', label: 'Coffee consumed' },
+  { value: '4+', label: 'Years coding' },
+  { value: '2', label: 'Years of internship experience' },
+  { value: '3', label: 'Major projects completed' },
+  { value: '∞', label: 'Curiosity and coffee' },
 ]
 
 export default function Home() {
