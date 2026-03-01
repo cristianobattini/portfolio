@@ -351,6 +351,55 @@
   justify-content: flex-end;
 }
 
+/* DESCRIPTION MARKDOWN EDITOR */
+.pform__desc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pform__desc-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pform__desc-tab {
+  padding: 0.25rem 0.9rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  transition: all 0.15s;
+}
+
+.pform__desc-tab:hover { color: var(--text-secondary); }
+
+.pform__desc-tab.active {
+  background: rgba(123, 47, 255, 0.18);
+  color: var(--plasma);
+}
+
+.pform__desc-preview {
+  min-height: 180px;
+  padding: 0.85rem 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.pform__desc-empty {
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
 /* TOAST */
 .admin__toast {
   position: fixed;

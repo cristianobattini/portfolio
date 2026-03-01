@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useProjectStore, useAuthStore } from '../store'
 import { authApi } from '../api'
 import './Admin.css'
@@ -139,6 +140,7 @@ function ProjectForm({ initial = emptyForm, onSave, onCancel, submitLabel = 'Lau
     ...initial,
     tech: Array.isArray(initial.tech) ? initial.tech.join(', ') : initial.tech,
   })
+  const [descTab, setDescTab] = useState('write')
 
   const set = (field, val) => setForm(prev => ({ ...prev, [field]: val }))
   const setLink = (field, val) => setForm(prev => ({ ...prev, links: { ...prev.links, [field]: val } }))
@@ -165,8 +167,36 @@ function ProjectForm({ initial = emptyForm, onSave, onCancel, submitLabel = 'Lau
           <input value={form.short} onChange={e => set('short', e.target.value)} placeholder="One-line description" />
         </div>
         <div className="pform__field pform__field--full">
-          <label>Full Description</label>
-          <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={4} placeholder="Detailed description..." />
+          <div className="pform__desc-header">
+            <label>Full Description</label>
+            <div className="pform__desc-tabs">
+              <button
+                type="button"
+                className={`pform__desc-tab ${descTab === 'write' ? 'active' : ''}`}
+                onClick={() => setDescTab('write')}
+              >Write</button>
+              <button
+                type="button"
+                className={`pform__desc-tab ${descTab === 'preview' ? 'active' : ''}`}
+                onClick={() => setDescTab('preview')}
+              >Preview</button>
+            </div>
+          </div>
+          {descTab === 'write' ? (
+            <textarea
+              value={form.description}
+              onChange={e => set('description', e.target.value)}
+              rows={8}
+              placeholder="Supports **markdown**: headings, lists, `code`, links..."
+            />
+          ) : (
+            <div className="pform__desc-preview detail__markdown">
+              {form.description
+                ? <ReactMarkdown>{form.description}</ReactMarkdown>
+                : <span className="pform__desc-empty">Nothing to preview yet.</span>
+              }
+            </div>
+          )}
         </div>
         <div className="pform__field">
           <label>Category</label>

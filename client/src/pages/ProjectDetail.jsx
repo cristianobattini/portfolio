@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useRef, useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { projectsApi } from '../api'
 import { useProjectStore } from '../store'
 import './ProjectDetail.css'
@@ -119,7 +120,9 @@ export default function ProjectDetail() {
         <div className="detail__body">
           <div className="detail__description">
             <h2 className="detail__section-title">About this project</h2>
-            <p className="detail__text">{project.description}</p>
+            <div className="detail__text detail__markdown">
+              <ReactMarkdown>{project.description}</ReactMarkdown>
+            </div>
           </div>
 
           <div className="detail__sidebar">

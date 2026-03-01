@@ -121,6 +121,90 @@
   line-height: 1.9;
 }
 
+.detail__markdown p {
+  margin-bottom: 1rem;
+}
+
+.detail__markdown h1,
+.detail__markdown h2,
+.detail__markdown h3,
+.detail__markdown h4 {
+  color: var(--text-primary);
+  margin: 1.5rem 0 0.75rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.detail__markdown h1 { font-size: 1.5rem; }
+.detail__markdown h2 { font-size: 1.25rem; }
+.detail__markdown h3 { font-size: 1.1rem; }
+
+.detail__markdown ul,
+.detail__markdown ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.detail__markdown ul { list-style: disc; }
+.detail__markdown ol { list-style: decimal; }
+
+.detail__markdown li {
+  margin-bottom: 0.35rem;
+}
+
+.detail__markdown strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.detail__markdown em {
+  font-style: italic;
+}
+
+.detail__markdown code {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  color: var(--plasma);
+}
+
+.detail__markdown pre {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.detail__markdown pre code {
+  background: none;
+  padding: 0;
+  color: var(--text-secondary);
+}
+
+.detail__markdown blockquote {
+  border-left: 3px solid var(--plasma);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.detail__markdown a {
+  color: var(--plasma);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.detail__markdown hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 1.5rem 0;
+}
+
 .detail__info-block {
   margin-bottom: 2.5rem;
 }
