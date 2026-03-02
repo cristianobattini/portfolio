@@ -1,6 +1,6 @@
 // routes/projects.js
 const router = require('express').Router()
-const db = require('../db/database')
+const { pool } = require('../db/database')
 const requireAuth = require('../middleware/auth')
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -24,39 +24,49 @@ function validateProject(data) {
 // ── Public routes ──────────────────────────────────────────────────
 
 // GET /api/projects — lista tutti (con filtri opzionali)
-router.get('/', (req, res) => {
-  const { category, featured } = req.query
+router.get('/', async (req, res) => {
+  try {
+    const { category, featured } = req.query
 
-  let query = 'SELECT * FROM projects'
-  const params = []
-  const conditions = []
+    let query = 'SELECT * FROM projects'
+    const params = []
+    const conditions = []
 
-  if (category && category !== 'All') {
-    conditions.push('category = ?')
-    params.push(category)
+    if (category && category !== 'All') {
+      conditions.push('category = ?')
+      params.push(category)
+    }
+    if (featured === 'true') {
+      conditions.push('featured = 1')
+    }
+
+    if (conditions.length) query += ' WHERE ' + conditions.join(' AND ')
+    query += ' ORDER BY sort_order DESC, created_at DESC'
+
+    const [rows] = await pool.execute(query, params)
+    res.json(rows.map(parseProject))
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Errore database.' })
   }
-  if (featured === 'true') {
-    conditions.push('featured = 1')
-  }
-
-  if (conditions.length) query += ' WHERE ' + conditions.join(' AND ')
-  query += ' ORDER BY sort_order DESC, created_at DESC'
-
-  const rows = db.prepare(query).all(...params)
-  res.json(rows.map(parseProject))
 })
 
 // GET /api/projects/:id — singolo progetto
-router.get('/:id', (req, res) => {
-  const row = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id)
-  if (!row) return res.status(404).json({ error: 'Progetto non trovato.' })
-  res.json(parseProject(row))
+router.get('/:id', async (req, res) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM projects WHERE id = ?', [req.params.id])
+    if (!rows[0]) return res.status(404).json({ error: 'Progetto non trovato.' })
+    res.json(parseProject(rows[0]))
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Errore database.' })
+  }
 })
 
 // ── Protected routes (richiedono JWT) ─────────────────────────────
 
 // POST /api/projects — crea nuovo
-router.post('/', requireAuth, (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   const errors = validateProject(req.body)
   if (errors.length) return res.status(400).json({ errors })
 
@@ -68,73 +78,88 @@ router.post('/', requireAuth, (req, res) => {
     links = {}, featured = false, sort_order = 0,
   } = req.body
 
-  const result = db.prepare(`
-    INSERT INTO projects (title, short, description, category, tech, year, status, color, links, featured, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
-    title.trim(), short, description,
-    category,
-    JSON.stringify(Array.isArray(tech) ? tech : []),
-    year, status, color,
-    JSON.stringify(links),
-    featured ? 1 : 0,
-    sort_order
-  )
+  try {
+    const [result] = await pool.execute(`
+      INSERT INTO projects (title, short, description, category, tech, year, status, color, links, featured, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      title.trim(), short, description,
+      category,
+      JSON.stringify(Array.isArray(tech) ? tech : []),
+      year, status, color,
+      JSON.stringify(links),
+      featured ? 1 : 0,
+      sort_order,
+    ])
 
-  const created = db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid)
-  res.status(201).json(parseProject(created))
+    const [rows] = await pool.execute('SELECT * FROM projects WHERE id = ?', [result.insertId])
+    res.status(201).json(parseProject(rows[0]))
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Errore database.' })
+  }
 })
 
 // PUT /api/projects/:id — aggiorna
-router.put('/:id', requireAuth, (req, res) => {
-  const existing = db.prepare('SELECT id FROM projects WHERE id = ?').get(req.params.id)
-  if (!existing) return res.status(404).json({ error: 'Progetto non trovato.' })
+router.put('/:id', requireAuth, async (req, res) => {
+  try {
+    const [existing] = await pool.execute('SELECT id FROM projects WHERE id = ?', [req.params.id])
+    if (!existing[0]) return res.status(404).json({ error: 'Progetto non trovato.' })
 
-  const errors = validateProject(req.body)
-  if (errors.length) return res.status(400).json({ errors })
+    const errors = validateProject(req.body)
+    if (errors.length) return res.status(400).json({ errors })
 
-  const {
-    title, short, description, category, tech,
-    year, status, color, links, featured, sort_order,
-  } = req.body
+    const {
+      title, short, description, category, tech,
+      year, status, color, links, featured, sort_order,
+    } = req.body
 
-  db.prepare(`
-    UPDATE projects SET
-      title       = ?,
-      short       = ?,
-      description = ?,
-      category    = ?,
-      tech        = ?,
-      year        = ?,
-      status      = ?,
-      color       = ?,
-      links       = ?,
-      featured    = ?,
-      sort_order  = ?,
-      updated_at  = datetime('now')
-    WHERE id = ?
-  `).run(
-    title.trim(), short, description,
-    category,
-    JSON.stringify(Array.isArray(tech) ? tech : []),
-    year, status, color,
-    JSON.stringify(links || {}),
-    featured ? 1 : 0,
-    sort_order ?? 0,
-    req.params.id
-  )
+    await pool.execute(`
+      UPDATE projects SET
+        title       = ?,
+        short       = ?,
+        description = ?,
+        category    = ?,
+        tech        = ?,
+        year        = ?,
+        status      = ?,
+        color       = ?,
+        links       = ?,
+        featured    = ?,
+        sort_order  = ?,
+        updated_at  = NOW()
+      WHERE id = ?
+    `, [
+      title.trim(), short, description,
+      category,
+      JSON.stringify(Array.isArray(tech) ? tech : []),
+      year, status, color,
+      JSON.stringify(links || {}),
+      featured ? 1 : 0,
+      sort_order ?? 0,
+      req.params.id,
+    ])
 
-  const updated = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id)
-  res.json(parseProject(updated))
+    const [rows] = await pool.execute('SELECT * FROM projects WHERE id = ?', [req.params.id])
+    res.json(parseProject(rows[0]))
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Errore database.' })
+  }
 })
 
 // DELETE /api/projects/:id
-router.delete('/:id', requireAuth, (req, res) => {
-  const existing = db.prepare('SELECT id FROM projects WHERE id = ?').get(req.params.id)
-  if (!existing) return res.status(404).json({ error: 'Progetto non trovato.' })
+router.delete('/:id', requireAuth, async (req, res) => {
+  try {
+    const [existing] = await pool.execute('SELECT id FROM projects WHERE id = ?', [req.params.id])
+    if (!existing[0]) return res.status(404).json({ error: 'Progetto non trovato.' })
 
-  db.prepare('DELETE FROM projects WHERE id = ?').run(req.params.id)
-  res.json({ message: 'Progetto eliminato.', id: parseInt(req.params.id) })
+    await pool.execute('DELETE FROM projects WHERE id = ?', [req.params.id])
+    res.json({ message: 'Progetto eliminato.', id: parseInt(req.params.id) })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Errore database.' })
+  }
 })
 
 module.exports = router

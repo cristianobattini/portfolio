@@ -2,7 +2,7 @@
 const router = require('express').Router()
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const db = require('../db/database')
+const { pool } = require('../db/database')
 
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
@@ -12,30 +12,36 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Username e password richiesti.' })
   }
 
-  const admin = db.prepare('SELECT * FROM admins WHERE username = ?').get(username)
+  try {
+    const [rows] = await pool.execute('SELECT * FROM admins WHERE username = ?', [username])
+    const admin = rows[0]
 
-  if (!admin) {
-    // Stesso tempo di risposta per evitare timing attacks
-    await bcrypt.hash('dummy', 12)
-    return res.status(401).json({ error: 'Credenziali non valide.' })
+    if (!admin) {
+      // Stesso tempo di risposta per evitare timing attacks
+      await bcrypt.hash('dummy', 12)
+      return res.status(401).json({ error: 'Credenziali non valide.' })
+    }
+
+    const valid = await bcrypt.compare(password, admin.password)
+
+    if (!valid) {
+      return res.status(401).json({ error: 'Credenziali non valide.' })
+    }
+
+    const token = jwt.sign(
+      { id: admin.id, username: admin.username },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+    )
+
+    res.json({
+      token,
+      admin: { id: admin.id, username: admin.username },
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Errore database.' })
   }
-
-  const valid = await bcrypt.compare(password, admin.password)
-
-  if (!valid) {
-    return res.status(401).json({ error: 'Credenziali non valide.' })
-  }
-
-  const token = jwt.sign(
-    { id: admin.id, username: admin.username },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
-  )
-
-  res.json({
-    token,
-    admin: { id: admin.id, username: admin.username },
-  })
 })
 
 // POST /api/auth/change-password  (richiede token)
@@ -50,22 +56,28 @@ router.post('/change-password', requireAuth, async (req, res) => {
     return res.status(400).json({ error: 'La nuova password deve avere almeno 8 caratteri.' })
   }
 
-  const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(req.admin.id)
-  const valid = await bcrypt.compare(currentPassword, admin.password)
+  try {
+    const [rows] = await pool.execute('SELECT * FROM admins WHERE id = ?', [req.admin.id])
+    const admin = rows[0]
 
-  if (!valid) {
-    return res.status(401).json({ error: 'Password attuale non corretta.' })
+    const valid = await bcrypt.compare(currentPassword, admin.password)
+    if (!valid) {
+      return res.status(401).json({ error: 'Password attuale non corretta.' })
+    }
+
+    const sameAsOld = await bcrypt.compare(newPassword, admin.password)
+    if (sameAsOld) {
+      return res.status(400).json({ error: 'La nuova password non può essere uguale a quella attuale.' })
+    }
+
+    const hash = await bcrypt.hash(newPassword, 12)
+    await pool.execute('UPDATE admins SET password = ? WHERE id = ?', [hash, req.admin.id])
+
+    res.json({ message: 'Password aggiornata con successo.' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Errore database.' })
   }
-
-  const sameAsOld = await bcrypt.compare(newPassword, admin.password)
-  if (sameAsOld) {
-    return res.status(400).json({ error: 'La nuova password non può essere uguale a quella attuale.' })
-  }
-
-  const hash = await bcrypt.hash(newPassword, 12)
-  db.prepare('UPDATE admins SET password = ? WHERE id = ?').run(hash, req.admin.id)
-
-  res.json({ message: 'Password aggiornata con successo.' })
 })
 
 // GET /api/auth/me  — verifica token e ritorna info admin

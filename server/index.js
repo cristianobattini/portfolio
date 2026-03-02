@@ -3,6 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const path = require('path')
+const { initDB } = require('./db/database')
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -57,9 +58,15 @@ app.use((err, req, res, next) => {
 })
 
 // ── Start ──────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🚀 Server avviato su http://localhost:${PORT}`)
-  console.log(`   Ambiente: ${process.env.NODE_ENV || 'development'}`)
-  console.log(`   Database: ./data/portfolio.db`)
-  console.log(`   Frontend: ${process.env.CLIENT_URL || 'http://localhost:5173'}\n`)
-})
+initDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`\n🚀 Server avviato su http://localhost:${PORT}`)
+      console.log(`   Ambiente: ${process.env.NODE_ENV || 'development'}`)
+      console.log(`   Frontend: ${process.env.CLIENT_URL || 'http://localhost:5173'}\n`)
+    })
+  })
+  .catch(err => {
+    console.error('❌ Connessione al database fallita:', err.message)
+    process.exit(1)
+  })

@@ -1,51 +1,51 @@
-// db/database.js — inizializza SQLite e crea le tabelle
-const Database = require('better-sqlite3')
-const path = require('path')
-const fs = require('fs')
+// db/database.js — connessione MySQL (AWS RDS)
+const mysql = require('mysql2/promise')
 
-const DB_DIR = path.join(__dirname, '../data')
-const DB_PATH = path.join(DB_DIR, 'portfolio.db')
-
-// Assicurati che la cartella data/ esista
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true })
-}
-
-const db = new Database(DB_PATH)
-
-// Performance pragmas
-db.pragma('journal_mode = WAL')
-db.pragma('foreign_keys = ON')
+const pool = mysql.createPool({
+  host:     process.env.DB_HOST,
+  port:     parseInt(process.env.DB_PORT || '3306'),
+  user:     process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
+})
 
 // ── Schema ─────────────────────────────────────────────────────────
-db.exec(`
-  CREATE TABLE IF NOT EXISTS admins (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    username    TEXT    NOT NULL UNIQUE,
-    password    TEXT    NOT NULL,          -- bcrypt hash
-    created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
-  );
+async function initDB() {
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS admins (
+      id         INT AUTO_INCREMENT PRIMARY KEY,
+      username   VARCHAR(255) NOT NULL UNIQUE,
+      password   VARCHAR(255) NOT NULL,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+  `)
 
-  CREATE TABLE IF NOT EXISTS projects (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    title       TEXT    NOT NULL,
-    short       TEXT,
-    description TEXT,
-    category    TEXT    NOT NULL DEFAULT 'Full Stack',
-    tech        TEXT    NOT NULL DEFAULT '[]',   -- JSON array
-    year        TEXT    NOT NULL DEFAULT (strftime('%Y', 'now')),
-    status      TEXT    NOT NULL DEFAULT 'Live',
-    color       TEXT    NOT NULL DEFAULT '#00f5ff',
-    links       TEXT    NOT NULL DEFAULT '{}',   -- JSON object
-    featured    INTEGER NOT NULL DEFAULT 0,       -- 0 | 1
-    sort_order  INTEGER NOT NULL DEFAULT 0,
-    created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
-    updated_at  TEXT    NOT NULL DEFAULT (datetime('now'))
-  );
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS projects (
+      id          INT AUTO_INCREMENT PRIMARY KEY,
+      title       VARCHAR(255) NOT NULL,
+      short       TEXT,
+      description TEXT,
+      category    VARCHAR(100) NOT NULL DEFAULT 'Full Stack',
+      tech        VARCHAR(5000) NOT NULL DEFAULT '[]',
+      year        VARCHAR(4) NOT NULL DEFAULT '2024',
+      status      VARCHAR(50) NOT NULL DEFAULT 'Live',
+      color       VARCHAR(20) NOT NULL DEFAULT '#00f5ff',
+      links       VARCHAR(5000) NOT NULL DEFAULT '{}',
+      featured    TINYINT(1) NOT NULL DEFAULT 0,
+      sort_order  INT NOT NULL DEFAULT 0,
+      created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_projects_featured (featured),
+      INDEX idx_projects_category (category),
+      INDEX idx_projects_sort (sort_order, created_at)
+    )
+  `)
 
-  CREATE INDEX IF NOT EXISTS idx_projects_featured  ON projects(featured);
-  CREATE INDEX IF NOT EXISTS idx_projects_category  ON projects(category);
-  CREATE INDEX IF NOT EXISTS idx_projects_sort      ON projects(sort_order DESC, created_at DESC);
-`)
+  console.log('   Database: connesso a MySQL ✓')
+}
 
-module.exports = db
+module.exports = { pool, initDB }
