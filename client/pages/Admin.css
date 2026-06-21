@@ -455,6 +455,44 @@
   font-size: 0.9rem;
 }
 
+/* CV manager / paper file upload extras */
+.admin__subhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.admin__subhead h3 {
+  font-size: 1.1rem;
+  color: var(--text-bright);
+  font-weight: 700;
+}
+
+.pform__file {
+  padding: 0.6rem !important;
+  font-family: var(--font-mono);
+  font-size: 0.8rem !important;
+  color: var(--text-secondary) !important;
+  cursor: none;
+}
+
+.pform__file::file-selector-button {
+  margin-right: 1rem;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--plasma-dim);
+  background: var(--plasma-glow);
+  color: var(--plasma);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: none;
+}
+
+.cv-manager { margin-top: 1rem; }
+
 @media (max-width: 700px) {
   .pform__grid { grid-template-columns: 1fr; }
   .admin__item { flex-direction: column; align-items: flex-start; }

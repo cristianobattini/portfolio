@@ -7,6 +7,9 @@ import SpaceBackground from './components/SpaceBackground'
 const Home = lazy(() => import('./pages/Home'))
 const Projects = lazy(() => import('./pages/Projects'))
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'))
+const Papers = lazy(() => import('./pages/Papers'))
+const PaperDetail = lazy(() => import('./pages/PaperDetail'))
+const CV = lazy(() => import('./pages/CV'))
 const Admin = lazy(() => import('./pages/Admin'))
 
 function ScrollTop() {
@@ -34,6 +37,9 @@ function AppContent() {
             <Route path="/" element={<Home />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
+            <Route path="/papers" element={<Papers />} />
+            <Route path="/papers/:id" element={<PaperDetail />} />
+            <Route path="/cv" element={<CV />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
         </Suspense>

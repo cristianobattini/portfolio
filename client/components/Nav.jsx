@@ -36,6 +36,12 @@ export default function Nav() {
           <Link to="/projects" className={`nav__link ${location.pathname.startsWith('/projects') ? 'active' : ''}`}>
             <span className="mono">02.</span> Projects
           </Link>
+          <Link to="/papers" className={`nav__link ${location.pathname.startsWith('/papers') ? 'active' : ''}`}>
+            <span className="mono">03.</span> Papers
+          </Link>
+          <Link to="/cv" className={`nav__link ${location.pathname.startsWith('/cv') ? 'active' : ''}`}>
+            <span className="mono">04.</span> CV
+          </Link>
           <Link to="/admin" className="nav__link nav__link--admin">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>

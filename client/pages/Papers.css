@@ -1,0 +1,78 @@
+.papers-page {
+  min-height: 100vh;
+  padding: calc(var(--nav-h) + 5rem) 0 8rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.papers-page__header {
+  margin-bottom: 3.5rem;
+}
+
+.papers-page__title {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--text-bright);
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  line-height: 0.95;
+}
+
+.papers-page__sub {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+
+.papers-page__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+}
+
+/* shared filter pill (duplicated here because page CSS is code-split) */
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  transition: all 0.25s;
+}
+
+.filter-btn:hover {
+  color: var(--text-bright);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.filter-btn.active {
+  background: var(--aurora);
+  border-color: var(--aurora);
+  color: var(--text-bright);
+}
+
+.papers-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.5rem;
+}
+
+.papers-page__empty {
+  padding: 6rem 2rem;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  .papers-page__grid { grid-template-columns: 1fr; }
+}

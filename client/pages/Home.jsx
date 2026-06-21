@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { useProjectStore } from '../store'
+import { useProjectStore, usePaperStore } from '../store'
 import ProjectCard from '../components/ProjectCard'
+import PaperCard from '../components/PaperCard'
 import './Home.css'
 
 const env = {
@@ -26,9 +27,13 @@ const STATS = [
 
 export default function Home() {
   const { projects, fetchProjects } = useProjectStore()
+  const { papers, fetchPapers } = usePaperStore()
   const heroRef = useRef()
 
-  useEffect(() => { fetchProjects({ featured: 'true' }) }, [])
+  useEffect(() => {
+    fetchProjects({ featured: true })
+    fetchPapers({ featured: true })
+  }, [])
 
   useEffect(() => {
     const hero = heroRef.current
@@ -43,6 +48,7 @@ export default function Home() {
   }, [])
 
   const featured = projects.filter(p => p.featured).slice(0, 3)
+  const featuredPapers = papers.filter(p => p.featured).slice(0, 3)
 
   return (
     <div className="home page-enter">
@@ -78,6 +84,12 @@ export default function Home() {
                 {env.heroCta}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </Link>
+              <Link to="/cv" className="btn btn--ghost">
+                View CV
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M7 17L17 7M17 7H7M17 7v10"/>
                 </svg>
               </Link>
               {env.github && (
@@ -168,6 +180,29 @@ export default function Home() {
             <div className="featured__cta">
               <Link to="/projects" className="btn btn--ghost">
                 View all projects
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FEATURED RESEARCH */}
+      {featuredPapers.length > 0 && (
+        <section className="featured">
+          <div className="container">
+            <div className="featured__header">
+              <div className="section-label mono">// research.featured</div>
+              <h2 className="section-title">Selected research</h2>
+            </div>
+            <div className="featured__grid">
+              {featuredPapers.map((p, i) => <PaperCard key={p.id} paper={p} index={i} />)}
+            </div>
+            <div className="featured__cta">
+              <Link to="/papers" className="btn btn--ghost">
+                View all papers
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
