@@ -8,37 +8,71 @@
   padding: 0;
 }
 
+/* ── Theme tokens ────────────────────────────────────────────
+   Dark = the night sky itself. Light = the printed atlas page —
+   warm parchment with the same constellations inked in sepia.
+   Toggled via [data-theme] on <html>, set by lib/preferences.jsx. */
 :root {
-  /* Colors */
-  --void: #03030a;
-  --deep-space: #080820;
-  --nebula-dark: #0d0d2e;
-  --nebula: #12123a;
-  --star-dust: #1a1a4a;
-  
-  --plasma: #00f5ff;
-  --plasma-dim: rgba(0, 245, 255, 0.15);
-  --plasma-glow: rgba(0, 245, 255, 0.05);
-  --aurora: #7b2fff;
-  --aurora-dim: rgba(123, 47, 255, 0.2);
-  --nova: #ff2d78;
-  --solar: #ffd60a;
-  
-  --text-bright: #ffffff;
-  --text-primary: rgba(255,255,255,0.88);
-  --text-secondary: rgba(255,255,255,0.5);
-  --text-dim: rgba(255,255,255,0.25);
+  /* Colors — warm night-sky atlas: ink & leather ground, gold-leaf accents */
+  --void: #150c08;
+  --void-rgb: 21, 12, 8;
+  --deep-space: #26160c;
+  --nebula-dark: #331d10;
+  --nebula: #402713;
+  --star-dust: #513319;
+  --glass-rgb: 51, 29, 16;         /* frosted-card tint, matches --nebula-dark */
 
-  /* Typography */
-  --font-display: 'Syne', sans-serif;
+  --plasma: #f2a53c;              /* starlight amber — primary accent */
+  --plasma-dim: rgba(242, 165, 60, 0.18);
+  --plasma-glow: rgba(242, 165, 60, 0.08);
+  --aurora: #d9622b;              /* ember copper — secondary accent */
+  --aurora-dim: rgba(217, 98, 43, 0.22);
+  --nova: #e0485a;                /* comet vermillion — alert/highlight */
+  --solar: #ffd76a;               /* soft gold — glows & stars */
+
+  --text-bright: #fff3e2;
+  --text-primary: rgba(var(--hairline-rgb), 0.9);
+  --text-secondary: rgba(var(--hairline-rgb), 0.55);
+  --text-dim: rgba(var(--hairline-rgb), 0.28);
+  --hairline-rgb: 255, 243, 226;  /* borders/dividers, same hue as --text-bright */
+
+  --ink: #1f130a;                 /* always-dark text for accent-colored buttons, in both themes */
+
+  /* Typography — an old atlas of the sky: serif headings, serif reading body */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Literata', Georgia, serif;
   --font-mono: 'DM Mono', monospace;
 
   /* Spacing */
   --nav-h: 72px;
-  
+
   /* Transitions */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+:root[data-theme="light"] {
+  --void: #f7ecd8;
+  --void-rgb: 247, 236, 216;
+  --deep-space: #f0e0c4;
+  --nebula-dark: #e9d5ae;
+  --nebula: #ddc493;
+  --star-dust: #c9a876;
+  --glass-rgb: 240, 224, 196;
+
+  --plasma: #b5691a;
+  --plasma-dim: rgba(181, 105, 26, 0.18);
+  --plasma-glow: rgba(181, 105, 26, 0.08);
+  --aurora: #a8441b;
+  --aurora-dim: rgba(168, 68, 27, 0.16);
+  --nova: #b52f3f;
+  --solar: #a67518;
+
+  --text-bright: #241407;
+  --text-primary: rgba(36, 20, 7, 0.88);
+  --text-secondary: rgba(36, 20, 7, 0.6);
+  --text-dim: rgba(36, 20, 7, 0.34);
+  --hairline-rgb: 36, 20, 7;
 }
 
 html {
@@ -47,11 +81,15 @@ html {
 }
 
 body {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   background: var(--void);
   color: var(--text-primary);
   overflow-x: hidden;
   cursor: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
 }
 
 a {
@@ -61,16 +99,19 @@ a {
 
 button {
   cursor: none;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   border: none;
   background: none;
 }
 
 input, textarea, select {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
 }
 
-/* Custom cursor */
+/* Custom cursor. mix-blend-mode: screen makes a bright dot glow against the
+   dark theme's near-black background — but the same blend mode would wash a
+   dot out to invisible against the light theme's pale parchment, so it
+   flips to multiply there (ink pressed into paper) below. */
 #cursor {
   position: fixed;
   width: 12px;
@@ -84,11 +125,15 @@ input, textarea, select {
   mix-blend-mode: screen;
 }
 
+:root[data-theme="light"] #cursor {
+  mix-blend-mode: multiply;
+}
+
 #cursor-ring {
   position: fixed;
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(0, 245, 255, 0.4);
+  border: 1px solid color-mix(in srgb, var(--plasma) 40%, transparent);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
@@ -105,7 +150,7 @@ body:has(a:hover, button:hover) #cursor {
 body:has(a:hover, button:hover) #cursor-ring {
   width: 56px;
   height: 56px;
-  border-color: rgba(123, 47, 255, 0.5);
+  border-color: color-mix(in srgb, var(--aurora) 50%, transparent);
 }
 
 /* Scrollbar */
@@ -148,10 +193,69 @@ body:has(a:hover, button:hover) #cursor-ring {
 }
 
 .glass {
-  background: rgba(13, 13, 46, 0.6);
+  background: rgba(var(--glass-rgb), 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(var(--hairline-rgb),0.06);
+}
+
+/* Buttons — global on purpose: every lazy-loaded route (including /admin,
+   which a visitor can land on directly without ever loading Home.jsx first)
+   uses these classes, so they can't live in a page-specific stylesheet. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.8rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 100px;
+  transition: all 0.3s var(--ease-out-expo);
+  letter-spacing: 0.01em;
+  cursor: none;
+}
+
+.btn--primary {
+  background: var(--plasma);
+  color: var(--ink);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--plasma) 30%, transparent);
+}
+
+.btn--primary:hover {
+  background: var(--text-bright);
+  box-shadow: 0 0 50px color-mix(in srgb, var(--plasma) 50%, transparent);
+  transform: translateY(-2px);
+}
+
+.btn--ghost {
+  color: var(--text-secondary);
+  border: 1px solid rgba(var(--hairline-rgb), 0.1);
+}
+
+.btn--ghost:hover {
+  color: var(--text-bright);
+  border-color: rgba(var(--hairline-rgb), 0.25);
+  transform: translateY(-2px);
+}
+
+.btn--outline {
+  color: var(--plasma);
+  border: 1px solid var(--plasma-dim);
+  background: var(--plasma-glow);
+}
+
+.btn--outline:hover {
+  background: color-mix(in srgb, var(--plasma) 12%, transparent);
+  transform: translateY(-2px);
+}
+
+/* Small colored eyebrow label ("// about.me" etc.) — global for the same
+   reason as .btn: used on Projects/Papers/CV/Admin, not just Home. */
+.section-label {
+  font-size: 0.75rem;
+  color: var(--plasma);
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
 }
 
 /* Page transition */

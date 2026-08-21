@@ -42,14 +42,14 @@
   margin: 0 auto 1.5rem;
   border-radius: 16px;
   background: var(--aurora-dim);
-  border: 1px solid rgba(123, 47, 255, 0.3);
+  border: 1px solid color-mix(in srgb, var(--aurora) 30%, transparent);
   color: var(--aurora);
 }
 
 .login__title {
   font-size: 1.8rem;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
   margin-bottom: 0.5rem;
 }
 
@@ -72,8 +72,8 @@
 .login__field input {
   width: 100%;
   padding: 0.85rem 1.2rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(var(--hairline-rgb),0.04);
+  border: 1px solid rgba(var(--hairline-rgb),0.1);
   border-radius: 10px;
   color: var(--text-bright);
   font-size: 1rem;
@@ -101,7 +101,7 @@
   width: 100%;
   justify-content: center;
   background: linear-gradient(135deg, var(--aurora), var(--plasma));
-  color: var(--void);
+  color: var(--ink);
   font-weight: 700;
 }
 
@@ -123,7 +123,7 @@
 .admin__title {
   font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.015em;
   color: var(--text-bright);
 }
 
@@ -137,7 +137,7 @@
   display: flex;
   gap: 0.5rem;
   margin-bottom: 2.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(var(--hairline-rgb),0.06);
   padding-bottom: 0;
 }
 
@@ -229,20 +229,20 @@
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-secondary);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(var(--hairline-rgb),0.1);
   border-radius: 100px;
   transition: all 0.2s;
 }
 
 .admin__action-btn:hover {
   color: var(--text-bright);
-  border-color: rgba(255,255,255,0.25);
+  border-color: rgba(var(--hairline-rgb),0.25);
 }
 
 .admin__action-btn--danger:hover {
   color: var(--nova);
-  border-color: rgba(255, 45, 120, 0.4);
-  background: rgba(255, 45, 120, 0.08);
+  border-color: color-mix(in srgb, var(--nova) 40%, transparent);
+  background: color-mix(in srgb, var(--nova) 8%, transparent);
 }
 
 /* FORM */
@@ -281,8 +281,8 @@
 .pform__field textarea,
 .pform__field select {
   padding: 0.7rem 1rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(var(--hairline-rgb),0.03);
+  border: 1px solid rgba(var(--hairline-rgb),0.08);
   border-radius: 10px;
   color: var(--text-bright);
   font-size: 0.9rem;
@@ -329,7 +329,7 @@
   height: 28px;
   border-radius: 50%;
   padding: 0;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(var(--hairline-rgb),0.1);
   background: transparent;
   cursor: pointer;
 }
@@ -361,7 +361,7 @@
 .pform__desc-tabs {
   display: flex;
   gap: 0;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(var(--hairline-rgb),0.08);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -379,15 +379,15 @@
 .pform__desc-tab:hover { color: var(--text-secondary); }
 
 .pform__desc-tab.active {
-  background: rgba(123, 47, 255, 0.18);
+  background: color-mix(in srgb, var(--aurora) 18%, transparent);
   color: var(--plasma);
 }
 
 .pform__desc-preview {
   min-height: 180px;
   padding: 0.85rem 1rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(var(--hairline-rgb),0.03);
+  border: 1px solid rgba(var(--hairline-rgb),0.08);
   border-radius: 10px;
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -407,7 +407,7 @@
   right: 2rem;
   z-index: 1000;
   padding: 0.85rem 1.5rem;
-  background: rgba(13, 13, 46, 0.95);
+  background: rgba(var(--glass-rgb), 0.95);
   border: 1px solid var(--plasma-dim);
   border-radius: 12px;
   backdrop-filter: blur(16px);
@@ -417,7 +417,7 @@
   animation: toastIn 0.4s var(--ease-out-expo);
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
-.admin__toast--error { border-color: rgba(255,45,120,0.3); color: var(--nova); }
+.admin__toast--error { border-color: rgba(224,72,90,0.3); color: var(--nova); }
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -427,7 +427,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(3, 3, 10, 0.8);
+  background: rgba(var(--void-rgb), 0.8);
   backdrop-filter: blur(8px);
   z-index: 500;
   display: flex;

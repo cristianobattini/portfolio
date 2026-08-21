@@ -16,7 +16,7 @@
 .detail-notfound h1 {
   font-size: 4rem;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.015em;
   margin: 1rem 0 2rem;
 }
 
@@ -57,10 +57,10 @@
 .detail__title {
   font-size: clamp(2.5rem, 6vw, 5rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.015em;
   line-height: 1;
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, #fff 40%, var(--accent));
+  background: linear-gradient(135deg, var(--text-bright) 40%, var(--accent));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -98,7 +98,7 @@
 
 .detail__divider {
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.06), transparent);
+  background: linear-gradient(to right, transparent, rgba(var(--hairline-rgb),0.06), transparent);
   margin: 4rem 0;
 }
 
@@ -114,7 +114,7 @@
   font-weight: 700;
   color: var(--text-bright);
   margin-bottom: 1.5rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.005em;
 }
 
 .detail__text {
@@ -166,15 +166,15 @@
 .detail__markdown code {
   font-family: var(--font-mono, monospace);
   font-size: 0.875rem;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(var(--hairline-rgb), 0.06);
   padding: 0.15em 0.4em;
   border-radius: 4px;
   color: var(--plasma);
 }
 
 .detail__markdown pre {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(var(--hairline-rgb), 0.05);
+  border: 1px solid rgba(var(--hairline-rgb), 0.08);
   border-radius: 8px;
   padding: 1rem 1.25rem;
   overflow-x: auto;
@@ -203,7 +203,7 @@
 
 .detail__markdown hr {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(var(--hairline-rgb), 0.1);
   margin: 1.5rem 0;
 }
 
@@ -228,7 +228,7 @@
 .detail__tech-item {
   padding: 0.35rem 0.85rem;
   background: var(--nebula-dark);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(var(--hairline-rgb),0.08);
   border-radius: 100px;
   font-family: var(--font-mono);
   font-size: 0.75rem;

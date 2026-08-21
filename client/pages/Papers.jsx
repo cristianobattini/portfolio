@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import { usePaperStore } from '../store'
+import { usePrefs } from '../lib/preferences.jsx'
 import PaperCard from '../components/PaperCard'
 import './Papers.css'
 
 export default function Papers() {
   const { papers, fetchPapers, loading } = usePaperStore()
+  const { t } = usePrefs()
   const [tag, setTag] = useState('All')
 
   useEffect(() => { fetchPapers() }, [])
@@ -21,22 +23,22 @@ export default function Papers() {
     <div className="papers-page page-enter">
       <div className="container">
         <header className="papers-page__header">
-          <div className="section-label mono">// research.papers[]</div>
-          <h1 className="papers-page__title">Papers &amp; Research</h1>
+          <div className="section-label mono">{t('works.label')}</div>
+          <h1 className="papers-page__title">{t('works.title')}</h1>
           <p className="papers-page__sub">
-            {papers.length} publication{papers.length === 1 ? '' : 's'} — read the abstract, download the PDF.
+            {t('works.subtitle')(papers.length)}
           </p>
         </header>
 
         {tags.length > 1 && (
           <div className="papers-page__filters">
-            {tags.map(t => (
+            {tags.map(tg => (
               <button
-                key={t}
-                className={`filter-btn ${tag === t ? 'active' : ''}`}
-                onClick={() => setTag(t)}
+                key={tg}
+                className={`filter-btn ${tag === tg ? 'active' : ''}`}
+                onClick={() => setTag(tg)}
               >
-                {t}
+                {tg === 'All' ? t('common.allProjects') : tg}
               </button>
             ))}
           </div>
@@ -45,14 +47,14 @@ export default function Papers() {
         {loading && (
           <div className="papers-page__empty">
             <span className="mono" style={{ color: 'var(--plasma)', animation: 'pulse 1.5s infinite' }}>
-              // loading papers...
+              {t('works.loading')}
             </span>
           </div>
         )}
 
         {!loading && filtered.length === 0 && (
           <div className="papers-page__empty">
-            <span className="mono">// no papers published yet</span>
+            <span className="mono">{t('works.empty')}</span>
           </div>
         )}
 

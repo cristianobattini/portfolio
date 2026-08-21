@@ -1,8 +1,10 @@
-# 🚀 Space Portfolio v3 — Supabase
+# 📖 Space Portfolio v3 — Supabase
 
-Personal portfolio with a 3D space theme, now fully powered by **Supabase**
-(Postgres + Auth + Storage). No custom backend server — the React app talks to
-Supabase directly, protected by Row Level Security.
+Personal portfolio styled like an old **atlas of the sky** — a warm, 3D space
+theme (amber starlight, ember copper, a slowly-turning armillary sphere in
+the background) instead of a cold cyberpunk one — fully powered by
+**Supabase** (Postgres + Auth + Storage). No custom backend server — the
+React app talks to Supabase directly, protected by Row Level Security.
 
 Includes **Projects**, a **Papers / Research** section (upload & showcase PDFs),
 and a **CV** section (timeline + downloadable PDF).
@@ -37,6 +39,14 @@ Open *Dashboard → SQL Editor*, paste the contents of
 [`supabase/schema.sql`](supabase/schema.sql) and run it. This creates the
 tables (`projects`, `papers`, `cv_entries`, `settings`), the RLS policies, and
 the public `papers` / `cv` storage buckets.
+
+### 2b. (Optional) Seed real projects
+Paste the contents of [`supabase/seed_projects.sql`](supabase/seed_projects.sql)
+into the SQL Editor and run it. It inserts the public repos from
+[github.com/cristianobattini](https://github.com/cristianobattini) as ready-made
+project entries (title, tech stack, GitHub link, warm accent color). It's
+idempotent — safe to run again, it skips any title that already exists — so
+feel free to edit or delete entries in `/admin` afterwards.
 
 ### 3. Create your admin user
 *Dashboard → Authentication → Users → Add user* (email + password).
@@ -85,7 +95,8 @@ npm run dev           # http://localhost:5173
 portfolio/
 ├── package.json              ← Runner (delegates to client)
 ├── supabase/
-│   └── schema.sql            ← Tables + RLS + storage buckets (run once)
+│   ├── schema.sql             ← Tables + RLS + storage buckets (run once)
+│   └── seed_projects.sql      ← Optional: real GitHub projects (run once)
 └── client/
     ├── .env                  ← Supabase keys + personal info (not committed)
     ├── lib/supabase.js       ← Supabase client

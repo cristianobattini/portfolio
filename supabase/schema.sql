@@ -27,13 +27,16 @@ create table if not exists public.projects (
   tech        jsonb       not null default '[]'::jsonb,
   year        text        not null default '2024',
   status      text        not null default 'Live',
-  color       text        not null default '#00f5ff',
+  color       text        not null default '#f2a53c',
+  logo_url    text        not null default '',   -- optional image, rendered in 3D on the detail page
   links       jsonb       not null default '{}'::jsonb,
   featured    boolean     not null default false,
   sort_order  int         not null default 0,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
+-- Backfill for databases created before logo_url existed.
+alter table public.projects add column if not exists logo_url text not null default '';
 create index if not exists idx_projects_featured on public.projects (featured);
 create index if not exists idx_projects_sort on public.projects (sort_order desc, created_at desc);
 
@@ -134,23 +137,27 @@ insert into storage.buckets (id, name, public)
 values ('cv', 'cv', true)
 on conflict (id) do update set public = true;
 
--- Public read for both buckets
+insert into storage.buckets (id, name, public)
+values ('logos', 'logos', true)
+on conflict (id) do update set public = true;
+
+-- Public read for all three buckets
 drop policy if exists "media public read" on storage.objects;
 create policy "media public read" on storage.objects
-  for select using (bucket_id in ('papers', 'cv'));
+  for select using (bucket_id in ('papers', 'cv', 'logos'));
 
 -- Authenticated users can upload / update / delete
 drop policy if exists "media admin insert" on storage.objects;
 create policy "media admin insert" on storage.objects
-  for insert to authenticated with check (bucket_id in ('papers', 'cv'));
+  for insert to authenticated with check (bucket_id in ('papers', 'cv', 'logos'));
 
 drop policy if exists "media admin update" on storage.objects;
 create policy "media admin update" on storage.objects
-  for update to authenticated using (bucket_id in ('papers', 'cv'));
+  for update to authenticated using (bucket_id in ('papers', 'cv', 'logos'));
 
 drop policy if exists "media admin delete" on storage.objects;
 create policy "media admin delete" on storage.objects
-  for delete to authenticated using (bucket_id in ('papers', 'cv'));
+  for delete to authenticated using (bucket_id in ('papers', 'cv', 'logos'));
 
 -- ============================================================
 --  DONE.

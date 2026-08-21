@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useProjectStore, usePaperStore } from '../store'
+import { usePrefs } from '../lib/preferences.jsx'
 import ProjectCard from '../components/ProjectCard'
 import PaperCard from '../components/PaperCard'
 import './Home.css'
@@ -18,17 +19,14 @@ const env = {
   linkedin: import.meta.env.VITE_LINKEDIN || '',
 }
 
-const STATS = [
-  { value: '4+', label: 'Years coding' },
-  { value: '2', label: 'Years of internship experience' },
-  { value: '3', label: 'Major projects completed' },
-  { value: '∞', label: 'Curiosity and coffee' },
-]
+const STAT_VALUES = ['4+', '2', '3', '∞']
 
 export default function Home() {
   const { projects, fetchProjects } = useProjectStore()
   const { papers, fetchPapers } = usePaperStore()
+  const { t } = usePrefs()
   const heroRef = useRef()
+  const stats = STAT_VALUES.map((value, i) => ({ value, label: t('home.stats')[i] }))
 
   useEffect(() => {
     fetchProjects({ featured: true })
@@ -59,7 +57,7 @@ export default function Home() {
             <div className="hero__eyebrow">
               <div className="hero__status">
                 <span className="hero__status-dot" />
-                <span className="mono">Available for work</span>
+                <span className="mono">{t('home.available')}</span>
               </div>
             </div>
 
@@ -87,7 +85,7 @@ export default function Home() {
                 </svg>
               </Link>
               <Link to="/cv" className="btn btn--ghost">
-                View CV
+                {t('home.viewCv')}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M7 17L17 7M17 7H7M17 7v10"/>
                 </svg>
@@ -114,7 +112,7 @@ export default function Home() {
 
         <div className="hero__scroll-hint">
           <div className="hero__scroll-line" />
-          <span className="mono">scroll</span>
+          <span className="mono">{t('home.scroll')}</span>
         </div>
       </section>
 
@@ -122,7 +120,7 @@ export default function Home() {
       <section className="stats">
         <div className="container">
           <div className="stats__grid">
-            {STATS.map(({ value, label }) => (
+            {stats.map(({ value, label }) => (
               <div key={label} className="stat">
                 <div className="stat__value">{value}</div>
                 <div className="stat__label mono">{label}</div>
@@ -137,21 +135,21 @@ export default function Home() {
         <div className="container">
           <div className="about__inner">
             <div className="about__left">
-              <div className="section-label mono">// about.me</div>
+              <div className="section-label mono">{t('home.aboutLabel')}</div>
               <h2 className="section-title">
-                Building bridges between<br />
-                <em>code</em> and <em>experience</em>
+                {t('home.aboutTitleA')}<br />
+                <em>{t('home.aboutTitleEm1')}</em> {t('home.aboutTitleAnd')} <em>{t('home.aboutTitleEm2')}</em>
               </h2>
               <p className="about__bio">{env.bio}</p>
               {env.email && (
                 <a href={`mailto:${env.email}`} className="btn btn--outline">
-                  Get in touch →
+                  {t('home.getInTouch')}
                 </a>
               )}
             </div>
             <div className="about__right">
               <div className="skills">
-                <div className="section-label mono">// skills[]</div>
+                <div className="section-label mono">{t('home.skillsLabel')}</div>
                 <div className="skills__grid">
                   {env.skills.map((skill, i) => (
                     <div key={skill} className="skill-item" style={{ animationDelay: `${i * 0.05}s` }}>
@@ -171,15 +169,15 @@ export default function Home() {
         <section className="featured">
           <div className="container">
             <div className="featured__header">
-              <div className="section-label mono">// projects.featured</div>
-              <h2 className="section-title">Selected work</h2>
+              <div className="section-label mono">{t('home.projectsLabel')}</div>
+              <h2 className="section-title">{t('home.selectedWork')}</h2>
             </div>
             <div className="featured__grid">
               {featured.map((p, i) => <ProjectCard key={p.id} project={p} index={i} />)}
             </div>
             <div className="featured__cta">
               <Link to="/projects" className="btn btn--ghost">
-                View all projects
+                {t('home.viewAllProjects')}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
@@ -189,20 +187,20 @@ export default function Home() {
         </section>
       )}
 
-      {/* FEATURED RESEARCH */}
+      {/* MY WORKS */}
       {featuredPapers.length > 0 && (
         <section className="featured">
           <div className="container">
             <div className="featured__header">
-              <div className="section-label mono">// research.featured</div>
-              <h2 className="section-title">Selected research</h2>
+              <div className="section-label mono">{t('home.worksLabel')}</div>
+              <h2 className="section-title">{t('home.selectedWorks')}</h2>
             </div>
             <div className="featured__grid">
               {featuredPapers.map((p, i) => <PaperCard key={p.id} paper={p} index={i} />)}
             </div>
             <div className="featured__cta">
               <Link to="/papers" className="btn btn--ghost">
-                View all papers
+                {t('home.viewAllWorks')}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
@@ -217,8 +215,10 @@ export default function Home() {
         <div className="container">
           <div className="contact-strip__inner">
             <div className="contact-strip__text">
-              <span className="mono" style={{ color: 'var(--plasma)', fontSize: '0.8rem' }}>Ready to launch?</span>
-              <h3>Let's build something<br />out of this world.</h3>
+              <span className="mono" style={{ color: 'var(--plasma)', fontSize: '0.8rem' }}>{t('home.readyToLaunch')}</span>
+              <h3>{t('home.contactTitle').split('\n').map((line, i) => (
+                <span key={i}>{i > 0 && <br />}{line}</span>
+              ))}</h3>
             </div>
             <div className="contact-strip__links">
               {env.email && <a href={`mailto:${env.email}`} className="contact-link">{env.email}</a>}
