@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useCvStore } from '../store'
+import { usePrefs } from '../lib/preferences.jsx'
 import './CV.css'
 
 const env = {
@@ -12,14 +13,9 @@ const env = {
   skills: (import.meta.env.VITE_SKILLS || '').split(',').map(s => s.trim()).filter(Boolean),
 }
 
-const SECTIONS = [
-  { key: 'experience', label: 'Experience', tag: '// work_history' },
-  { key: 'education', label: 'Education', tag: '// education' },
-]
-
-function Timeline({ entries }) {
+function Timeline({ entries, emptyLabel }) {
   if (entries.length === 0) {
-    return <p className="cv__empty mono">// nothing here yet</p>
+    return <p className="cv__empty mono">{emptyLabel}</p>
   }
   return (
     <div className="cv__timeline">
@@ -49,15 +45,21 @@ function Timeline({ entries }) {
 
 export default function CV() {
   const { entries, file, loading, fetchCv } = useCvStore()
+  const { t } = usePrefs()
 
   useEffect(() => { fetchCv() }, [])
+
+  const SECTIONS = [
+    { key: 'experience', tag: t('cv.workHistory') },
+    { key: 'education', tag: t('cv.education') },
+  ]
 
   return (
     <div className="cv-page page-enter">
       <div className="container">
         <header className="cv__header">
           <div>
-            <div className="section-label mono">// curriculum.vitae</div>
+            <div className="section-label mono">{t('cv.label')}</div>
             <h1 className="cv__title">{env.name}</h1>
             <p className="cv__role">{env.role}</p>
             <div className="cv__contacts mono">
@@ -68,7 +70,7 @@ export default function CV() {
           </div>
           {file?.url && (
             <a href={file.url} download={file.name || 'cv.pdf'} className="btn btn--primary cv__download">
-              Download CV
+              {t('cv.download')}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
               </svg>
@@ -77,7 +79,7 @@ export default function CV() {
         </header>
 
         {loading && (
-          <div className="cv__empty"><span className="mono" style={{ color: 'var(--plasma)', animation: 'pulse 1.5s infinite' }}>// loading...</span></div>
+          <div className="cv__empty"><span className="mono" style={{ color: 'var(--plasma)', animation: 'pulse 1.5s infinite' }}>{t('common.loading')}</span></div>
         )}
 
         {!loading && (
@@ -87,14 +89,14 @@ export default function CV() {
               return (
                 <section key={s.key} className="cv__section">
                   <h2 className="cv__section-title mono">{s.tag}</h2>
-                  <Timeline entries={items} />
+                  <Timeline entries={items} emptyLabel={t('cv.empty')} />
                 </section>
               )
             })}
 
             {env.skills.length > 0 && (
               <section className="cv__section">
-                <h2 className="cv__section-title mono">// skills</h2>
+                <h2 className="cv__section-title mono">{t('cv.skills')}</h2>
                 <div className="cv__skills">
                   {env.skills.map(skill => (
                     <span key={skill} className="cv__skill">{skill}</span>

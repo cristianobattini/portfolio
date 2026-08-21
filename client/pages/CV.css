@@ -17,7 +17,7 @@
 .cv__title {
   font-size: clamp(2.5rem, 7vw, 5rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.015em;
   line-height: 0.95;
   color: var(--text-bright);
   margin: 0.5rem 0 0.75rem;
@@ -57,7 +57,7 @@
   letter-spacing: 0.08em;
   margin-bottom: 2rem;
   padding-bottom: 0.8rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(var(--hairline-rgb), 0.06);
 }
 
 .cv__timeline {
@@ -164,7 +164,7 @@
 .detail__markdown a { color: var(--plasma); text-decoration: underline; }
 .detail__markdown code {
   font-family: var(--font-mono, monospace); font-size: 0.85rem;
-  background: rgba(255,255,255,0.06); padding: 0.12em 0.4em; border-radius: 4px; color: var(--plasma);
+  background: rgba(var(--hairline-rgb),0.06); padding: 0.12em 0.4em; border-radius: 4px; color: var(--plasma);
 }
 
 @media (max-width: 640px) {

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useProjectStore, usePaperStore, useCvStore, useAuthStore } from '../store'
-import { authApi, papersApi, cvApi } from '../api'
+import { authApi, papersApi, cvApi, projectsApi } from '../api'
 import './Admin.css'
 
 const CATEGORIES = ['Full Stack', 'Frontend', 'Backend', 'Mobile', 'Other']
-const COLORS = ['#00f5ff', '#7b2fff', '#ff2d78', '#ffd60a', '#22d55e', '#ff6b35']
+const COLORS = ['#f2a53c', '#d9622b', '#e0485a', '#ffd76a', '#8fae4a', '#ff6b35']
 
 // ── Login Gate (Supabase email/password) ──────────────────────────
 function LoginGate() {
@@ -131,7 +131,7 @@ function ChangePasswordModal({ onClose }) {
 const emptyProject = {
   title: '', short: '', description: '', category: 'Full Stack',
   tech: '', year: new Date().getFullYear().toString(), status: 'Live',
-  color: '#00f5ff', featured: false,
+  color: '#f2a53c', logo_url: '', featured: false,
   links: { github: '', live: '' },
 }
 
@@ -141,6 +141,7 @@ function ProjectForm({ initial = emptyProject, onSave, onCancel, submitLabel = '
     tech: Array.isArray(initial.tech) ? initial.tech.join(', ') : initial.tech,
   })
   const [descTab, setDescTab] = useState('write')
+  const [logoFile, setLogoFile] = useState(null)
 
   const set = (field, val) => setForm(prev => ({ ...prev, [field]: val }))
   const setLink = (field, val) => setForm(prev => ({ ...prev, links: { ...prev.links, [field]: val } }))
@@ -152,7 +153,7 @@ function ProjectForm({ initial = emptyProject, onSave, onCancel, submitLabel = '
       tech: typeof form.tech === 'string'
         ? form.tech.split(',').map(t => t.trim()).filter(Boolean)
         : form.tech,
-    })
+    }, logoFile)
   }
 
   return (
@@ -215,6 +216,39 @@ function ProjectForm({ initial = emptyProject, onSave, onCancel, submitLabel = '
               <button key={c} className={`pform__color ${form.color === c ? 'active' : ''}`} style={{ background: c }} onClick={() => set('color', c)} />
             ))}
             <input type="color" value={form.color} onChange={e => set('color', e.target.value)} className="pform__color-picker" />
+          </div>
+        </div>
+        <div className="pform__field pform__field--full">
+          <label>Logo (optional — rendered in 3D on the project page, instead of the spinning icosahedron)</label>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            {(logoFile || form.logo_url) && (
+              <img
+                src={logoFile ? URL.createObjectURL(logoFile) : form.logo_url}
+                alt="Logo preview"
+                style={{ width: 48, height: 48, borderRadius: 10, objectFit: 'cover', border: '1px solid rgba(var(--hairline-rgb), 0.15)' }}
+              />
+            )}
+            <input
+              value={form.logo_url}
+              onChange={e => { set('logo_url', e.target.value); setLogoFile(null) }}
+              placeholder="https://... (or upload a file below)"
+              style={{ flex: 1, minWidth: 200 }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
+            <label className="admin__action-btn" style={{ display: 'inline-block', cursor: 'none' }}>
+              {logoFile ? `↑ ${logoFile.name} ready to upload` : 'Upload image'}
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => setLogoFile(e.target.files?.[0] || null)} />
+            </label>
+            {(logoFile || form.logo_url) && (
+              <button
+                type="button"
+                className="admin__action-btn admin__action-btn--danger"
+                onClick={() => { setLogoFile(null); set('logo_url', '') }}
+              >
+                Remove logo
+              </button>
+            )}
           </div>
         </div>
         <div className="pform__field pform__field--full">
@@ -535,16 +569,20 @@ function AdminDashboard() {
     setTimeout(() => setNotification(null), 3000)
   }
 
-  // Projects
-  const handleAddProject = async (data) => {
+  // Projects (with optional logo upload)
+  const handleAddProject = async (data, logoFile) => {
     setSaving(true)
-    try { await addProject(data); setTab('projects'); notify('Progetto aggiunto!') }
-    catch (e) { notify(e.message, 'error') } finally { setSaving(false) }
+    try {
+      const logo_url = logoFile ? await projectsApi.uploadLogo(logoFile) : data.logo_url
+      await addProject({ ...data, logo_url }); setTab('projects'); notify('Progetto aggiunto!')
+    } catch (e) { notify(e.message, 'error') } finally { setSaving(false) }
   }
-  const handleUpdateProject = async (data) => {
+  const handleUpdateProject = async (data, logoFile) => {
     setSaving(true)
-    try { await updateProject(editingProject.id, data); setEditingProject(null); notify('Progetto aggiornato!') }
-    catch (e) { notify(e.message, 'error') } finally { setSaving(false) }
+    try {
+      const logo_url = logoFile ? await projectsApi.uploadLogo(logoFile) : data.logo_url
+      await updateProject(editingProject.id, { ...data, logo_url }); setEditingProject(null); notify('Progetto aggiornato!')
+    } catch (e) { notify(e.message, 'error') } finally { setSaving(false) }
   }
 
   // Papers (with file upload)

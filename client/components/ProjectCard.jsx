@@ -1,16 +1,18 @@
 import { Link } from 'react-router-dom'
+import { usePrefs } from '../lib/preferences.jsx'
 import './ProjectCard.css'
 
 export default function ProjectCard({ project, index }) {
+  const { t } = usePrefs()
   return (
     <Link to={`/projects/${project.id}`} className="pcard" style={{ '--accent': project.color }}>
       <div className="pcard__index mono">{String(index + 1).padStart(2, '0')}</div>
-      
+
       <div className="pcard__glow" />
-      
+
       <div className="pcard__header">
         <div className="pcard__meta">
-          <span className="tag">{project.category}</span>
+          <span className="tag">{t(`categories.${project.category}`)}</span>
           {project.status && <span className="tag pcard__status">{project.status}</span>}
         </div>
         <span className="pcard__year mono">{project.year}</span>

@@ -12,7 +12,7 @@
 .projects-page__title {
   font-size: clamp(3rem, 8vw, 6rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.015em;
   color: var(--text-bright);
   margin-top: 0.5rem;
   margin-bottom: 1rem;
@@ -43,20 +43,20 @@
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-secondary);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(var(--hairline-rgb),0.08);
   background: transparent;
   transition: all 0.25s;
 }
 
 .filter-btn:hover {
   color: var(--text-bright);
-  border-color: rgba(255,255,255,0.2);
+  border-color: rgba(var(--hairline-rgb),0.2);
 }
 
 .filter-btn.active {
   background: var(--plasma);
   border-color: var(--plasma);
-  color: var(--void);
+  color: var(--ink);
 }
 
 .filter-btn__count {
@@ -69,11 +69,11 @@
   border-radius: 100px;
   font-size: 0.65rem;
   font-family: var(--font-mono);
-  background: rgba(255,255,255,0.1);
+  background: rgba(var(--hairline-rgb),0.1);
 }
 
 .filter-btn.active .filter-btn__count {
-  background: rgba(3, 3, 10, 0.2);
+  background: rgba(var(--void-rgb), 0.2);
 }
 
 .projects-page__grid {

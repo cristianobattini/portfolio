@@ -21,6 +21,7 @@ export const supabase = createClient(url || '', anonKey || '', {
 
 export const PAPERS_BUCKET = 'papers'
 export const CV_BUCKET = 'cv'
+export const LOGOS_BUCKET = 'logos'
 
 // Public URL for a file stored in one of our buckets.
 export function fileUrl(bucket, path) {

@@ -1,6 +1,6 @@
 // src/api.js — data access layer on top of Supabase.
 // Keeps the rest of the app (stores, pages) free of Supabase details.
-import { supabase, fileUrl, PAPERS_BUCKET, CV_BUCKET } from './lib/supabase'
+import { supabase, fileUrl, PAPERS_BUCKET, CV_BUCKET, LOGOS_BUCKET } from './lib/supabase'
 
 // ── small helpers ─────────────────────────────────────────────────
 function unwrap({ data, error }) {
@@ -22,6 +22,7 @@ function normalizeProject(row) {
     tech: Array.isArray(row.tech) ? row.tech : [],
     links: row.links && typeof row.links === 'object' ? row.links : {},
     featured: !!row.featured,
+    logo_url: row.logo_url || '',
   }
 }
 
@@ -78,6 +79,17 @@ export const projectsApi = {
     normalizeProject(unwrap(await supabase.from('projects').update(toProjectRow(data)).eq('id', id).select().single())),
 
   delete: async (id) => unwrap(await supabase.from('projects').delete().eq('id', id)),
+
+  // Upload a project logo image, returns its public URL.
+  // Logos live in their own bucket; old files aren't cleaned up on replace
+  // since logo_url can also point to an external URL we don't own a path for.
+  uploadLogo: async (file) => {
+    const path = randomName(file.name)
+    const { error } = await supabase.storage.from(LOGOS_BUCKET)
+      .upload(path, file, { contentType: file.type || 'image/png', upsert: false })
+    if (error) throw new Error(error.message)
+    return fileUrl(LOGOS_BUCKET, path)
+  },
 }
 
 function toProjectRow(d) {
@@ -89,7 +101,8 @@ function toProjectRow(d) {
     tech: Array.isArray(d.tech) ? d.tech : [],
     year: String(d.year || new Date().getFullYear()),
     status: d.status || 'Live',
-    color: d.color || '#00f5ff',
+    color: d.color || '#f2a53c',
+    logo_url: d.logo_url || '',
     links: d.links || {},
     featured: !!d.featured,
     sort_order: Number(d.sort_order) || 0,
